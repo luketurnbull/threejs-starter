@@ -1,12 +1,11 @@
 import * as THREE from "three";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { FolderApi } from "tweakpane";
-import type { Disposable } from "~/core";
 import type Resources from "~/utils/resources";
 import type Time from "~/utils/time";
 import type Debug from "~/utils/debug";
 
-export default class Fox implements Disposable {
+export default class Fox {
   private scene: THREE.Scene;
   private unsubscribeTick: (() => void) | null = null;
 

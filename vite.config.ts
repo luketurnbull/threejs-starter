@@ -6,7 +6,6 @@ export default defineConfig({
   plugins: [glsl()],
   resolve: {
     alias: {
-      "~/core": fileURLToPath(new URL("./src/core", import.meta.url)),
       "~/utils": fileURLToPath(new URL("./src/utils", import.meta.url)),
       "~/types": fileURLToPath(new URL("./src/types", import.meta.url)),
       "~/constants": fileURLToPath(new URL("./src/constants", import.meta.url)),

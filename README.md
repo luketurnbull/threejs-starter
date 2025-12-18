@@ -8,7 +8,6 @@ A modern Three.js boilerplate inspired by [Bruno Simon's](https://threejs-journe
 - **Bun** - Fast package manager and runtime
 - **Dependency Injection** - Classes receive dependencies via constructor instead of singleton pattern
 - **Type-safe EventEmitter** - Generic event emitter with typed payloads instead of a generic callback system
-- **Disposable Pattern** - All objects implement `Disposable` interface for proper cleanup
 - **Stats.js** - Performance monitoring in debug mode
 - **Shader Examples** - Includes GLSL shader integration with `vite-plugin-glsl`
 - **Up-to-date Dependencies** - All packages are current (Three.js r182, Vite, TypeScript 5.9)
@@ -28,8 +27,6 @@ Add `#debug` to the URL to enable Tweakpane controls and Stats.js performance mo
 
 ```
 src/
-├── core/                # Base interfaces
-│   └── disposable.ts    # Disposable interface for cleanup
 ├── constants/
 │   ├── config.ts        # Scene configuration
 │   └── sources.ts       # Asset definitions
@@ -56,7 +53,6 @@ src/
 All imports use `~/` prefix for project-specific modules:
 
 ```typescript
-import { Disposable } from "~/core";
 import { config, sources } from "~/constants";
 import { Time, Sizes, Debug } from "~/utils";
 import type { Source } from "~/types";

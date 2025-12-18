@@ -20,7 +20,6 @@ This is a Three.js starter using TypeScript and Vite with an event-driven class-
 
 ### Path Aliases
 
-- `~/core` → `src/core/` - Base interfaces (Disposable)
 - `~/utils` → `src/utils/` - Utility classes
 - `~/types` → `src/types/` - Type definitions
 - `~/constants` → `src/constants/` - Configuration and sources
@@ -29,10 +28,7 @@ This is a Three.js starter using TypeScript and Vite with an event-driven class-
 
 ### Core Structure
 
-**Experience** (`src/experience/index.ts`) - Main orchestrator that initializes all systems and manages the render loop via event subscriptions. Implements `Disposable` for cleanup.
-
-**Core** (`src/core/`):
-- `Disposable` - Interface for objects requiring cleanup, with `isDisposable()` type guard
+**Experience** (`src/experience/index.ts`) - Main orchestrator that initializes all systems and manages the render loop via event subscriptions.
 
 **Utils** (`src/utils/`):
 - `EventEmitter` - Type-safe pub/sub base class used throughout
@@ -72,16 +68,14 @@ import vertexShader from "./vertex.vert";
 
 ### Adding Scene Objects
 
-1. Create a class in `src/experience/world/objects/` implementing `Disposable`
+1. Create a class in `src/experience/world/objects/`
 2. Store scene reference and any event unsubscribe functions
 3. Instantiate in `World` constructor (after `resources.ready` if assets needed)
 4. Subscribe to `time.on("tick")` for animations, storing the unsubscribe function
 5. Implement `dispose()` to clean up geometry, materials, event subscriptions, and remove from scene
 
 ```typescript
-import type { Disposable } from "~/core";
-
-export default class MyObject implements Disposable {
+export default class MyObject {
   private scene: THREE.Scene;
   private unsubscribeTick: (() => void) | null = null;
   

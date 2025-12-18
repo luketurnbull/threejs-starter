@@ -1,12 +1,11 @@
 import * as THREE from "three";
-import type { Disposable } from "~/core";
 import type Debug from "~/utils/debug";
 import type Time from "~/utils/time";
 import vertexShader from "./vertex.vert";
 import fragmentShader from "./fragment.frag";
 import type { FolderApi } from "tweakpane";
 
-export class PlaneShader implements Disposable {
+export class PlaneShader {
   private scene: THREE.Scene;
   private mesh: THREE.Mesh;
   private material: THREE.RawShaderMaterial;

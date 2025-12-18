@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import type { Disposable } from "~/core";
 import Camera from "~/experience/camera";
 import Debug from "~/utils/debug";
 import Resources from "~/utils/resources";
@@ -9,7 +8,7 @@ import sources from "~/constants/sources";
 import Time from "~/utils/time";
 import World from "~/experience/world";
 
-export default class Experience implements Disposable {
+export default class Experience {
   private canvas: HTMLCanvasElement;
 
   debug: Debug;

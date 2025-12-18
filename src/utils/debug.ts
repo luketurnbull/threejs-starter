@@ -1,8 +1,6 @@
 import { Pane } from "tweakpane";
 import Stats from "stats.js";
-import type { Disposable } from "~/core";
-
-export default class Debug implements Disposable {
+export default class Debug {
   active: boolean;
   ui: Pane | null;
   stats: Stats | null;

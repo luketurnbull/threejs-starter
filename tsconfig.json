@@ -2,8 +2,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~/core": ["src/core/index.ts"],
-      "~/core/*": ["src/core/*"],
       "~/utils": ["src/utils/index.ts"],
       "~/utils/*": ["src/utils/*"],
       "~/types": ["src/types/index.ts"],

@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import type { Disposable } from "~/core";
 import type Resources from "~/utils/resources";
 import type Time from "~/utils/time";
 import type Debug from "~/utils/debug";
@@ -8,7 +7,7 @@ import Floor from "~/experience/world/objects/floor";
 import Fox from "~/experience/world/objects/fox";
 import { PlaneShader } from "~/experience/world/objects/plane";
 
-export default class World implements Disposable {
+export default class World {
   private scene: THREE.Scene;
 
   floor!: Floor;

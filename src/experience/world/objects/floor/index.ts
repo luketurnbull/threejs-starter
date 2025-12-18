@@ -1,8 +1,7 @@
 import * as THREE from "three";
-import type { Disposable } from "~/core";
 import type Resources from "~/utils/resources";
 
-export default class Floor implements Disposable {
+export default class Floor {
   private scene: THREE.Scene;
   mesh: THREE.Mesh;
 

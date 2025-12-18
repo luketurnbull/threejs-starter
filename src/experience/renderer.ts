@@ -1,11 +1,10 @@
 import * as THREE from "three";
-import type { Disposable } from "~/core";
 import type Sizes from "~/utils/sizes";
 import type Debug from "~/utils/debug";
 import type Camera from "~/experience/camera";
 import type Time from "~/utils/time";
 
-export default class Renderer implements Disposable {
+export default class Renderer {
   private debug: Debug;
   private unsubscribeResize: (() => void) | null = null;
   private unsubscribeTick: (() => void) | null = null;
