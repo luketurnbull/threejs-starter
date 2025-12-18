@@ -2,9 +2,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@utils/*": ["src/utils/*"],
-      "@experience/*": ["src/experience/*"],
-      "@glsl/*": ["src/glsl/*"],
+      "~/utils/*": ["src/utils/*"],
+      "~/experience/*": ["src/experience/*"],
+      "~/glsl/*": ["src/glsl/*"],
+      "~/types/*": ["src/types/*"],
+      "~/constants/*": ["src/constants/*"],
     },
     "target": "ES2022",
     "useDefineForClassFields": true,

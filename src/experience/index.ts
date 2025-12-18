@@ -1,13 +1,12 @@
 import * as THREE from "three";
-
-import Debug from "@utils/debug";
-import Sizes from "@utils/sizes";
-import Time from "@utils/time";
-import Resources from "@utils/resources";
-import Camera from "@experience/camera";
-import Renderer from "@experience/renderer";
-import World from "@experience/world/world";
-import sources from "@experience/sources";
+import Camera from "~/experience/camera";
+import Debug from "~/utils/debug";
+import Resources from "~/utils/resources";
+import Renderer from "~/experience/renderer";
+import Sizes from "~/utils/sizes";
+import sources from "~/constants/sources";
+import Time from "~/utils/time";
+import World from "~/experience/world/world";
 
 export default class Experience {
   private canvas: HTMLCanvasElement;

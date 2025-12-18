@@ -1,10 +1,12 @@
 import * as THREE from "three";
-import {
-  type GLTF,
-  GLTFLoader,
-} from "three/examples/jsm/loaders/GLTFLoader.js";
-import EventEmitter from "@utils/events";
-import type { Source } from "@experience/sources";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import EventEmitter from "~/utils/events";
+import type {
+  Loader,
+  ResourceItem,
+  Source,
+  SourceType,
+} from "~/types/resources";
 
 type ResourcesEvents = {
   ready: {
@@ -12,51 +14,41 @@ type ResourcesEvents = {
   };
 };
 
-type ResourceItem = THREE.Texture | THREE.CubeTexture | GLTF;
-
 export default class Resources extends EventEmitter<ResourcesEvents> {
-  sources: Source[];
   items: Record<string, ResourceItem>;
   toLoad: number;
   loaded: number;
-  loaders: {
-    gltfLoader: GLTFLoader;
-    textureLoader: THREE.TextureLoader;
-    cubeTextureLoader: THREE.CubeTextureLoader;
-  };
+  loaders: Map<SourceType, Loader>;
 
   constructor(sources: Source[]) {
     super();
 
-    this.sources = sources;
     this.items = {};
-    this.toLoad = this.sources.length;
+    this.toLoad = sources.length;
     this.loaded = 0;
 
-    this.loaders = {
-      gltfLoader: new GLTFLoader(),
-      textureLoader: new THREE.TextureLoader(),
-      cubeTextureLoader: new THREE.CubeTextureLoader(),
-    };
+    // Create loaders for each source type
+    this.loaders = new Map<SourceType, Loader>([
+      ["gltfModel", new GLTFLoader()],
+      ["texture", new THREE.TextureLoader()],
+      ["cubeTexture", new THREE.CubeTextureLoader()],
+    ]);
 
-    this.startLoading();
+    this.startLoading(sources);
   }
 
-  private startLoading(): void {
-    for (const source of this.sources) {
-      if (source.type === "gltfModel") {
-        this.loaders.gltfLoader.load(source.path as string, (file) => {
-          this.sourceLoaded(source, file);
-        });
-      } else if (source.type === "texture") {
-        this.loaders.textureLoader.load(source.path as string, (file) => {
-          this.sourceLoaded(source, file);
-        });
-      } else if (source.type === "cubeTexture") {
-        this.loaders.cubeTextureLoader.load(source.path as string[], (file) => {
-          this.sourceLoaded(source, file);
-        });
+  private startLoading(sources: Source[]): void {
+    for (const source of sources) {
+      const loader = this.loaders.get(source.type);
+
+      if (!loader) {
+        console.error(`No loader found for type ${source.type}`);
+        continue;
       }
+
+      loader.load(source.path as string & readonly string[], (file) => {
+        this.sourceLoaded(source, file);
+      });
     }
   }
 

@@ -1,8 +1,4 @@
-export type Source = {
-  name: string;
-  type: "texture" | "cubeTexture" | "gltfModel";
-  path: string | string[];
-};
+import type { Source } from "~/types/resources";
 
 const sources: Source[] = [
   {

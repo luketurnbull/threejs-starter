@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import type Debug from "@utils/debug";
-import type Time from "@utils/time";
+import type Debug from "~/utils/debug";
+import type Time from "~/utils/time";
 import vertexShader from "./vertex.vert";
 import fragmentShader from "./fragment.frag";
 import type { FolderApi } from "tweakpane";

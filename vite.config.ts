@@ -6,11 +6,13 @@ export default defineConfig({
   plugins: [glsl()],
   resolve: {
     alias: {
-      "@utils": fileURLToPath(new URL("./src/utils", import.meta.url)),
-      "@experience": fileURLToPath(
+      "~/utils": fileURLToPath(new URL("./src/utils", import.meta.url)),
+      "~/experience": fileURLToPath(
         new URL("./src/experience", import.meta.url),
       ),
-      "@glsl": fileURLToPath(new URL("./src/glsl", import.meta.url)),
+      "~/glsl": fileURLToPath(new URL("./src/glsl", import.meta.url)),
+      "~/types": fileURLToPath(new URL("./src/types", import.meta.url)),
+      "~/constants": fileURLToPath(new URL("./src/constants", import.meta.url)),
     },
   },
 });

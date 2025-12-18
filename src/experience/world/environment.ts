@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { FolderApi } from "tweakpane";
-import type Resources from "@utils/resources";
-import type Debug from "@utils/debug";
+import type Resources from "~/utils/resources";
+import type Debug from "~/utils/debug";
 
 export default class Environment {
   scene: THREE.Scene;

@@ -1,12 +1,9 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import type Sizes from "@utils/sizes";
-import type Time from "@utils/time";
+import type Sizes from "~/utils/sizes";
+import type Time from "~/utils/time";
 
 export default class Camera {
-  private sizes: Sizes;
-  private time: Time;
-  private scene: THREE.Scene;
   instance: THREE.PerspectiveCamera;
   controls: OrbitControls;
 
@@ -16,28 +13,26 @@ export default class Camera {
     scene: THREE.Scene,
     canvas: HTMLCanvasElement,
   ) {
-    this.sizes = sizes;
-    this.time = time;
-    this.scene = scene;
-
+    // Create a new perspective camera instance
     this.instance = new THREE.PerspectiveCamera(
       35,
-      this.sizes.width / this.sizes.height,
+      sizes.width / sizes.height,
       0.1,
       100,
     );
     this.instance.position.set(6, 4, 8);
-    this.scene.add(this.instance);
+    scene.add(this.instance);
 
+    // Create orbit controls
     this.controls = new OrbitControls(this.instance, canvas);
     this.controls.enableDamping = true;
 
-    this.sizes.on("resize", ({ width, height }) => {
+    sizes.on("resize", ({ width, height }) => {
       this.instance.aspect = width / height;
       this.instance.updateProjectionMatrix();
     });
 
-    this.time.on("tick", () => {
+    time.on("tick", () => {
       this.controls.update();
     });
   }

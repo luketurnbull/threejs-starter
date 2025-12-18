@@ -1,9 +1,9 @@
 import * as THREE from "three";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { FolderApi } from "tweakpane";
-import type Resources from "@utils/resources";
-import type Time from "@utils/time";
-import type Debug from "@utils/debug";
+import type Resources from "~/utils/resources";
+import type Time from "~/utils/time";
+import type Debug from "~/utils/debug";
 
 export default class Fox {
   debugFolder: FolderApi | null = null;

@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import type Resources from "@utils/resources";
-import type Time from "@utils/time";
-import type Debug from "@utils/debug";
-import Environment from "@experience/world/environment";
-import Floor from "@experience/world/floor";
-import Fox from "@experience/world/fox";
-import { PlaneShader } from "@experience/world/plane";
+import type Resources from "~/utils/resources";
+import type Time from "~/utils/time";
+import type Debug from "~/utils/debug";
+import Environment from "~/experience/world/environment";
+import Floor from "~/experience/world/floor";
+import Fox from "~/experience/world/fox";
+import { PlaneShader } from "~/experience/world/plane";
 
 export default class World {
   floor!: Floor;
