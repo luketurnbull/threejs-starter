@@ -7,7 +7,7 @@ import Renderer from "~/experience/renderer";
 import Sizes from "~/utils/sizes";
 import sources from "~/constants/sources";
 import Time from "~/utils/time";
-import World from "~/experience/world/world";
+import World from "~/experience/world";
 
 export default class Experience implements Disposable {
   private canvas: HTMLCanvasElement;
