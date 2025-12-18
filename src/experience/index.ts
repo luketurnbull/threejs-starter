@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import type { Disposable } from "~/core";
 import Camera from "~/experience/camera";
 import Debug from "~/utils/debug";
 import Resources from "~/utils/resources";
@@ -8,7 +9,7 @@ import sources from "~/constants/sources";
 import Time from "~/utils/time";
 import World from "~/experience/world/world";
 
-export default class Experience {
+export default class Experience implements Disposable {
   private canvas: HTMLCanvasElement;
 
   debug: Debug;
@@ -42,34 +43,24 @@ export default class Experience {
       this.scene,
       this.camera,
       this.canvas,
+      this.debug,
     );
 
     // Create World
     this.world = new World(this.scene, this.resources, this.time, this.debug);
   }
 
-  destroy(): void {
-    this.sizes.off("resize");
-    this.time.off("tick");
+  dispose(): void {
+    // Dispose world objects
+    this.world.dispose();
 
-    this.scene.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
-        child.geometry.dispose();
-
-        for (const key in child.material) {
-          const value = (child.material as Record<string, unknown>)[key];
-          if (value && typeof value === "object" && "dispose" in value) {
-            (value as { dispose: () => void }).dispose();
-          }
-        }
-      }
-    });
-
+    // Dispose camera controls
     this.camera.controls.dispose();
-    this.renderer.instance.dispose();
 
-    if (this.debug.active && this.debug.ui) {
-      this.debug.ui.dispose();
-    }
+    // Dispose renderer
+    this.renderer.dispose();
+
+    // Dispose debug UI
+    this.debug.dispose();
   }
 }

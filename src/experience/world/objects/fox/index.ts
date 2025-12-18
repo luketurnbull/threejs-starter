@@ -1,11 +1,15 @@
 import * as THREE from "three";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { FolderApi } from "tweakpane";
+import type { Disposable } from "~/core";
 import type Resources from "~/utils/resources";
 import type Time from "~/utils/time";
 import type Debug from "~/utils/debug";
 
-export default class Fox {
+export default class Fox implements Disposable {
+  private scene: THREE.Scene;
+  private unsubscribeTick: (() => void) | null = null;
+
   debugFolder: FolderApi | null = null;
   resource: GLTF;
   model: THREE.Group;
@@ -24,6 +28,7 @@ export default class Fox {
     time: Time,
     debug: Debug,
   ) {
+    this.scene = scene;
     this.resource = resources.items.foxModel as GLTF;
 
     // Set scale
@@ -31,7 +36,7 @@ export default class Fox {
     this.model.scale.set(0.02, 0.02, 0.02);
 
     // Add to scene
-    scene.add(this.model);
+    this.scene.add(this.model);
 
     // Add shadows
     this.model.traverse((child) => {
@@ -56,7 +61,9 @@ export default class Fox {
     this.addDebugFolder(debug);
 
     // Set update
-    time.on("tick", ({ delta }) => this.mixer.update(delta * 0.001));
+    this.unsubscribeTick = time.on("tick", ({ delta }) =>
+      this.mixer.update(delta * 0.001),
+    );
   }
 
   addDebugFolder(debug: Debug) {
@@ -88,5 +95,12 @@ export default class Fox {
     newAction.crossFadeFrom(oldAction, 1, false);
 
     this.actions.current = newAction;
+  }
+
+  dispose(): void {
+    this.unsubscribeTick?.();
+    this.mixer.stopAllAction();
+    this.debugFolder?.dispose();
+    this.scene.remove(this.model);
   }
 }

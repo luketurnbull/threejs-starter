@@ -1,11 +1,12 @@
 import * as THREE from "three";
 import type { FolderApi } from "tweakpane";
+import type { Disposable } from "~/core";
 import type Resources from "~/utils/resources";
 import type Debug from "~/utils/debug";
 
-export default class Environment {
-  scene: THREE.Scene;
-  debugFolder: FolderApi | null = null;
+export default class Environment implements Disposable {
+  private scene: THREE.Scene;
+  private debugFolder: FolderApi | null = null;
 
   sunLight: THREE.DirectionalLight;
   environmentMap: {
@@ -97,5 +98,12 @@ export default class Environment {
         })
         .on("change", () => this.updateMaterials());
     }
+  }
+
+  dispose(): void {
+    this.sunLight.dispose();
+    this.debugFolder?.dispose();
+    this.scene.remove(this.sunLight);
+    this.scene.environment = null;
   }
 }

@@ -2,11 +2,16 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "~/core": ["src/core/index.ts"],
+      "~/core/*": ["src/core/*"],
+      "~/utils": ["src/utils/index.ts"],
       "~/utils/*": ["src/utils/*"],
-      "~/experience/*": ["src/experience/*"],
-      "~/glsl/*": ["src/glsl/*"],
+      "~/types": ["src/types/index.ts"],
       "~/types/*": ["src/types/*"],
+      "~/constants": ["src/constants/index.ts"],
       "~/constants/*": ["src/constants/*"],
+      "~/experience/*": ["src/experience/*"],
+      "~/shaders/*": ["src/shaders/*"],
     },
     "target": "ES2022",
     "useDefineForClassFields": true,

@@ -1,10 +1,14 @@
 import * as THREE from "three";
+import type { Disposable } from "~/core";
 import type Resources from "~/utils/resources";
 
-export default class Floor {
+export default class Floor implements Disposable {
+  private scene: THREE.Scene;
   mesh: THREE.Mesh;
 
   constructor(scene: THREE.Scene, resources: Resources) {
+    this.scene = scene;
+
     const geometry = new THREE.CircleGeometry(5, 64);
     const material = this.createMaterial(resources);
 
@@ -12,7 +16,7 @@ export default class Floor {
     this.mesh.rotation.x = -Math.PI * 0.5;
     this.mesh.receiveShadow = true;
 
-    scene.add(this.mesh);
+    this.scene.add(this.mesh);
   }
 
   createMaterial(resources: Resources) {
@@ -31,5 +35,11 @@ export default class Floor {
       map: colorTexture,
       normalMap: normalTexture,
     });
+  }
+
+  dispose(): void {
+    this.mesh.geometry.dispose();
+    (this.mesh.material as THREE.Material).dispose();
+    this.scene.remove(this.mesh);
   }
 }

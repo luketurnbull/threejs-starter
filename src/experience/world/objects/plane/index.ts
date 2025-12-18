@@ -1,14 +1,17 @@
 import * as THREE from "three";
+import type { Disposable } from "~/core";
 import type Debug from "~/utils/debug";
 import type Time from "~/utils/time";
 import vertexShader from "./vertex.vert";
 import fragmentShader from "./fragment.frag";
 import type { FolderApi } from "tweakpane";
 
-export class PlaneShader {
+export class PlaneShader implements Disposable {
+  private scene: THREE.Scene;
   private mesh: THREE.Mesh;
   private material: THREE.RawShaderMaterial;
   private debugFolder?: FolderApi;
+  private unsubscribeTick: (() => void) | null = null;
 
   private uTime: THREE.Uniform<number> = new THREE.Uniform(0);
   private uColor: THREE.Uniform<THREE.Color> = new THREE.Uniform(
@@ -16,6 +19,8 @@ export class PlaneShader {
   );
 
   constructor(scene: THREE.Scene, time: Time, debug: Debug) {
+    this.scene = scene;
+
     // Create material
     this.material = this.createMaterial();
 
@@ -26,7 +31,7 @@ export class PlaneShader {
     this.mesh = new THREE.Mesh(geometry, this.material);
 
     // Add mesh to scene
-    scene.add(this.mesh);
+    this.scene.add(this.mesh);
 
     // Updater
     this.update(time);
@@ -36,7 +41,7 @@ export class PlaneShader {
   }
 
   update(time: Time) {
-    time.on("tick", ({ elapsed }) => {
+    this.unsubscribeTick = time.on("tick", ({ elapsed }) => {
       this.uTime.value = elapsed * 0.001;
     });
   }
@@ -64,5 +69,13 @@ export class PlaneShader {
         this.material.uniformsNeedUpdate = true;
       });
     }
+  }
+
+  dispose(): void {
+    this.unsubscribeTick?.();
+    this.mesh.geometry.dispose();
+    this.material.dispose();
+    this.debugFolder?.dispose();
+    this.scene.remove(this.mesh);
   }
 }

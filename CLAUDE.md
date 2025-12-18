@@ -10,7 +10,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Debug Mode
 
-Add `#debug` to the URL (e.g., `http://localhost:5173/#debug`) to enable the Tweakpane debug UI.
+Add `#debug` to the URL (e.g., `http://localhost:5173/#debug`) to enable:
+- Tweakpane debug UI
+- Stats.js performance monitor (FPS, MS, MB)
 
 ## Architecture
 
@@ -18,40 +20,82 @@ This is a Three.js starter using TypeScript and Vite with an event-driven class-
 
 ### Path Aliases
 
-- `@utils/*` → `src/utils/*`
-- `@experience/*` → `src/experience/*`
-- `@glsl/*` → `src/glsl/*`
+- `~/core` → `src/core/` - Base interfaces (Disposable)
+- `~/utils` → `src/utils/` - Utility classes
+- `~/types` → `src/types/` - Type definitions
+- `~/constants` → `src/constants/` - Configuration and sources
+- `~/experience/*` → `src/experience/*` - Experience classes
+- `~/shaders/*` → `src/shaders/*` - Shared GLSL utilities
 
 ### Core Structure
 
-**Experience** (`src/experience/experience.ts`) - Main orchestrator that initializes all systems and manages the render loop via event subscriptions.
+**Experience** (`src/experience/index.ts`) - Main orchestrator that initializes all systems and manages the render loop via event subscriptions. Implements `Disposable` for cleanup.
+
+**Core** (`src/core/`):
+- `Disposable` - Interface for objects requiring cleanup, with `isDisposable()` type guard
 
 **Utils** (`src/utils/`):
 - `EventEmitter` - Type-safe pub/sub base class used throughout
 - `Time` - Emits `tick` events with `delta` and `elapsed` values each frame
 - `Sizes` - Emits `resize` events with viewport dimensions
-- `Resources` - Async asset loader that emits `ready` when all sources load
-- `Debug` - Tweakpane wrapper, active when URL hash is `#debug`
+- `Resources` - Async asset loader that emits `progress` and `ready` events
+- `Debug` - Tweakpane + Stats.js wrapper, active when URL hash is `#debug`
 
-**World** (`src/experience/world/`) - Scene objects created after resources load:
-- `World` - Container that instantiates scene objects on `resources.ready`
-- `Environment` - Lighting and environment map setup
-- `Floor`, `Fox` - Example scene objects demonstrating textures, GLTF models, and animations
+**Constants** (`src/constants/`):
+- `config.ts` - Scene configuration (camera, renderer, shadows)
+- `sources.ts` - Asset definitions
+
+**World** (`src/experience/world/`) - Scene content organized by purpose:
+- `objects/` - Meshes and models (floor, fox, plane)
+- `systems/` - Non-mesh scene setup (environment, lighting)
 
 ### Resource Loading
 
-Define assets in `src/experience/sources.ts` with `name`, `type` (`texture`, `cubeTexture`, `gltfModel`), and `path`. Access loaded assets via `resources.items[name]` after the `ready` event.
+Define assets in `src/constants/sources.ts` with `name`, `type` (`texture`, `cubeTexture`, `gltfModel`), and `path`. Access loaded assets via `resources.items[name]` after the `ready` event.
+
+```typescript
+// Track loading progress
+resources.on("progress", ({ progress }) => {
+  console.log(`${Math.round(progress * 100)}%`);
+});
+```
 
 ### GLSL Shaders
 
-Place shaders in `src/glsl/` with `.vert`/`.frag` extensions. Import directly in TypeScript via `vite-plugin-glsl`:
+- **Component-specific shaders**: Co-locate with the component (e.g., `world/objects/plane/vertex.vert`)
+- **Shared shader utilities**: Place in `src/shaders/` for reusable GLSL chunks
+
+Import via `vite-plugin-glsl`:
 ```typescript
-import vertexShader from "@glsl/plane/vertex.vert";
+import vertexShader from "./vertex.vert";
 ```
 
 ### Adding Scene Objects
 
-1. Create a class in `src/experience/world/`
-2. Instantiate in `World` constructor (after `resources.ready` if assets needed)
-3. Subscribe to `time.on("tick")` for animations
-4. Add `update()` method if called from World's update loop
+1. Create a class in `src/experience/world/objects/` implementing `Disposable`
+2. Store scene reference and any event unsubscribe functions
+3. Instantiate in `World` constructor (after `resources.ready` if assets needed)
+4. Subscribe to `time.on("tick")` for animations, storing the unsubscribe function
+5. Implement `dispose()` to clean up geometry, materials, event subscriptions, and remove from scene
+
+```typescript
+import type { Disposable } from "~/core";
+
+export default class MyObject implements Disposable {
+  private scene: THREE.Scene;
+  private unsubscribeTick: (() => void) | null = null;
+  
+  constructor(scene: THREE.Scene, time: Time) {
+    this.scene = scene;
+    // ... create mesh
+    this.unsubscribeTick = time.on("tick", () => this.update());
+  }
+  
+  dispose(): void {
+    this.unsubscribeTick?.();
+    this.mesh.geometry.dispose();
+    (this.mesh.material as THREE.Material).dispose();
+    this.scene.remove(this.mesh);
+  }
+}
+```

@@ -21,10 +21,14 @@ export default class Sizes extends EventEmitter<SizesEvents> {
     this.pixelRatio = this.getPixelRatio();
 
     window.addEventListener("resize", () => {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.pixelRatio = this.getPixelRatio();
+
       this.emit("resize", {
-        width: window.innerWidth,
-        height: window.innerHeight,
-        pixelRatio: this.getPixelRatio(),
+        width: this.width,
+        height: this.height,
+        pixelRatio: this.pixelRatio,
       });
     });
   }

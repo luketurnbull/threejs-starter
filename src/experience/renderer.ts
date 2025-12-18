@@ -1,12 +1,17 @@
 import * as THREE from "three";
+import type { Disposable } from "~/core";
 import type Sizes from "~/utils/sizes";
+import type Debug from "~/utils/debug";
 import type Camera from "~/experience/camera";
 import type Time from "~/utils/time";
 
-export default class Renderer {
+export default class Renderer implements Disposable {
+  private debug: Debug;
+  private unsubscribeResize: (() => void) | null = null;
+  private unsubscribeTick: (() => void) | null = null;
+
   scene: THREE.Scene;
   camera: Camera;
-
   instance: THREE.WebGLRenderer;
 
   constructor(
@@ -15,10 +20,12 @@ export default class Renderer {
     scene: THREE.Scene,
     camera: Camera,
     canvas: HTMLCanvasElement,
+    debug: Debug,
   ) {
     // Set dependencies
     this.scene = scene;
     this.camera = camera;
+    this.debug = debug;
 
     // Initialize renderer
     this.instance = new THREE.WebGLRenderer({
@@ -27,7 +34,7 @@ export default class Renderer {
       powerPreference: "high-performance",
     });
 
-    // Setttings
+    // Settings
     this.instance.toneMapping = THREE.CineonToneMapping;
     this.instance.toneMappingExposure = 1.75;
     this.instance.shadowMap.enabled = true;
@@ -36,11 +43,14 @@ export default class Renderer {
 
     this.resize(sizes.width, sizes.height, sizes.pixelRatio);
 
-    sizes.on("resize", ({ width, height, pixelRatio }) => {
-      this.resize(width, height, pixelRatio);
-    });
+    this.unsubscribeResize = sizes.on(
+      "resize",
+      ({ width, height, pixelRatio }) => {
+        this.resize(width, height, pixelRatio);
+      },
+    );
 
-    time.on("tick", () => {
+    this.unsubscribeTick = time.on("tick", () => {
       this.render();
     });
   }
@@ -51,6 +61,14 @@ export default class Renderer {
   }
 
   render() {
+    this.debug.begin();
     this.instance.render(this.scene, this.camera.instance);
+    this.debug.end();
+  }
+
+  dispose(): void {
+    this.unsubscribeResize?.();
+    this.unsubscribeTick?.();
+    this.instance.dispose();
   }
 }

@@ -9,6 +9,22 @@ import type {
 } from "~/types/resources";
 
 type ResourcesEvents = {
+  /**
+   * Emitted when a single resource finishes loading
+   */
+  progress: {
+    /** URL/path of the loaded resource */
+    url: string;
+    /** Number of resources loaded so far */
+    loaded: number;
+    /** Total number of resources to load */
+    total: number;
+    /** Progress percentage (0-1) */
+    progress: number;
+  };
+  /**
+   * Emitted when all resources have finished loading
+   */
   ready: {
     itemsLoaded: number;
   };
@@ -55,6 +71,15 @@ export default class Resources extends EventEmitter<ResourcesEvents> {
   private sourceLoaded(source: Source, file: ResourceItem): void {
     this.items[source.name] = file;
     this.loaded++;
+
+    // Emit progress event
+    const url = Array.isArray(source.path) ? source.path[0] : source.path;
+    this.emit("progress", {
+      url,
+      loaded: this.loaded,
+      total: this.toLoad,
+      progress: this.loaded / this.toLoad,
+    });
 
     if (this.loaded === this.toLoad) {
       this.emit("ready", {
